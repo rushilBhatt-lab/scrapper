@@ -1,9 +1,9 @@
-import { Button } from '@nextui-org/react';
+import { Button } from "@nextui-org/react";
 
 export default function Home() {
-  return (
-    <div>
-      <Button>test</Button>
-    </div>
-  );
+	return (
+		<div>
+			<Button>test</Button>
+		</div>
+	);
 }

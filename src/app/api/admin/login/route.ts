@@ -3,6 +3,7 @@ import { prisma } from "@/lib";
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { SHA256 as sha256 } from "crypto-js";
+
 const alg = "HS256";
 const secret = new TextEncoder().encode(process.env.JWT_key);
 const createToken = async (email: string, userId: number) => {

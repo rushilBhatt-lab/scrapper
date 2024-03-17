@@ -8,6 +8,7 @@ import { apiclient } from "@/lib";
 import { ADMIN_API_ROUTES } from "@/utils";
 import { useAppStore } from "@/store";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const architects_Daughter = Architects_Daughter({
 	weight: "400",
@@ -21,7 +22,7 @@ const Login = () => {
 	const router = useRouter();
 	const handleLogin = async () => {
 		try {
-			const response = await apiclient.post(ADMIN_API_ROUTES.LOGIN, {
+			const response = await axios.post(ADMIN_API_ROUTES.LOGIN, {
 				email,
 				password,
 			});

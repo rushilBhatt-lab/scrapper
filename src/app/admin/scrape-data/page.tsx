@@ -1,14 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, CardBody, CardFooter, Input, Listbox, ListboxItem, Tab, Tabs } from "@nextui-org/react";
 import axios from "axios";
 import { apiclient } from "@/lib";
 import { ADMIN_API_ROUTES } from "@/utils";
+import { ScrapingQueue } from "@/components/admin/scraping-queue";
+import { CurrentlyScrapingTable } from "./components/currently-scraping-table";
 
 const ScrapeData = () => {
 	const [cities, setCities] = useState([]);
 	const [selectedCity, setSelectedCity] = useState<undefined | string>(undefined);
+	const [jobs, setJobs] = useState([]);
+
 	const searchCities = async (search: string) => {
 		const response = await axios.get(`https://secure.geonames.org/searchJSON?q=${search}&maxRows=5&username=rxb33&style=SHORT`);
 		const parseData = response.data?.geonames;
@@ -17,11 +21,23 @@ const ScrapeData = () => {
 	};
 
 	const startScraping = async () => {
-		await apiclient.post(ADMIN_API_ROUTES.CREATE_JOB, {
+		await axios.post(ADMIN_API_ROUTES.CREATE_JOB, {
 			url: `https://www.thomascook.in/holidays/international-tour-packages/${selectedCity?.toLowerCase()}-tour-packages`,
 			jobType: { type: "location" },
 		});
 	};
+
+	useEffect(() => {
+		const getData = async () => {
+			const data = await axios.get(ADMIN_API_ROUTES.JOB_DETAILS);
+			setJobs(data.data.jobs);
+		};
+
+		const apiInterval = setInterval(() => getData(), 3000);
+		return () => {
+			clearInterval(apiInterval);
+		};
+	}, []);
 
 	return (
 		<section className="m-10 grid grid-cols-3 gap-5">
@@ -49,6 +65,10 @@ const ScrapeData = () => {
 					Scrape
 				</Button>
 			</Card>
+			<ScrapingQueue />
+			<div className="col-span-3">
+				<CurrentlyScrapingTable jobs={jobs} />
+			</div>
 		</section>
 	);
 };
